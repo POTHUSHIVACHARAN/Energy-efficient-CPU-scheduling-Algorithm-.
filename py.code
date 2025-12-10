@@ -1,0 +1,20 @@
+# Energy Efficient CPU Scheduling (DVFS Simulation)
+
+tasks = [3, 6, 2, 8, 5]  
+frequencies = [1.0, 1.5, 2.0]  
+power_usage = {1.0: 5, 1.5: 8, 2.0: 12}
+
+print("Task\tBest Frequency\tEnergy Used")
+print("----------------------------------------")
+
+for task in tasks:
+    best_freq = None
+    least_energy = float('inf')
+
+    for freq in frequencies:
+        energy = task * power_usage[freq]
+        if energy < least_energy:
+            least_energy = energy
+            best_freq = freq
+
+    print(f"{task}\t{best_freq} GHz\t\t{least_energy} Joules")
