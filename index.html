@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Energy-Efficient CPU Scheduling</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #020617;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background: #22c55e;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #16a34a;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #334155;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #1e293b;
+    }
+    .result {
+      margin-top: 20px;
+      background: #020617;
+      padding: 15px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<header>Energy-Efficient CPU Scheduling Algorithm</header>
+
+<div class="container">
+  <h3>Add Process</h3>
+  <input type="text" id="pid" placeholder="Process ID">
+  <input type="number" id="burst" placeholder="Burst Time">
+  <input type="number" id="priority" placeholder="Priority (lower = higher)">
+  <button onclick="addProcess()">Add Process</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>PID</th>
+        <th>Burst Time</th>
+        <th>Priority</th>
+      </tr>
+    </thead>
+    <tbody id="ptable"></tbody>
+  </table>
+
+  <button onclick="schedule()">Run Energy-Efficient Scheduling</button>
+
+  <div class="result" id="output"></div>
+</div>
+
+<script>
+  let processes = [];
+
+  function addProcess() {
+    let pid = document.getElementById('pid').value;
+    let burst = parseInt(document.getElementById('burst').value);
+    let priority = parseInt(document.getElementById('priority').value);
+
+    if (!pid || isNaN(burst) || isNaN(priority)) return;
+
+    processes.push({ pid, burst, priority });
+    updateTable();
+  }
+
+  function updateTable() {
+    let table = document.getElementById('ptable');
+    table.innerHTML = "";
+    processes.forEach(p => {
+      table.innerHTML += `<tr><td>${p.pid}</td><td>${p.burst}</td><td>${p.priority}</td></tr>`;
+    });
+  }
+
+  function schedule() {
+    let time = 0;
+    let energy = 0;
+
+    processes.sort((a, b) => a.priority - b.priority || a.burst - b.burst);
+
+    let result = "<h3>Execution Order</h3>";
+
+    processes.forEach(p => {
+      let frequency = p.burst > 5 ? 2.5 : 1.5;
+      energy += frequency * p.burst;
+      time += p.burst;
+      result += `Process ${p.pid} executed at ${frequency}GHz<br>`;
+    });
+
+    result += `<br>Total Time: ${time}`;
+    result += `<br>Estimated Energy: ${energy.toFixed(2)} units`;
+
+    document.getElementById('output').innerHTML = result;
+  }
+</script>
+
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
